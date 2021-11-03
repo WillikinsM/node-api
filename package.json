@@ -1,0 +1,22 @@
+{
+  "name": "node-api",
+  "version": "1.0.0",
+  "description": "api para se consumida em react",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WillikinsM/node-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WillikinsM/node-api/issues"
+  },
+  "homepage": "https://github.com/WillikinsM/node-api#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
