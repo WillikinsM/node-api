@@ -42,14 +42,14 @@ app.get("/infos", (req, res) => {
   res.send(myInfo);
 });
 
-app.get("/table", (req, res) => {
+/* app.get("/table", (req, res) => {
   res.send(tableData);
 });
 
 app.post("/table", (req, res) => {
   let sortorder = req.body.order;
   let sortingColumn = req.body.sort;
-  let sortedData = [...tableData];
+  var sortedData = [...tableData];
   console.log(sortingColumn);
   console.log(sortorder);
 
@@ -65,6 +65,87 @@ app.post("/table", (req, res) => {
 
   res.send(sortedData);
 });
+ */
+
+app.get("/table", paginate(tableData), (req, res) => {
+  res.json(res.paginatedResult);
+});
+
+app.post("/table", paginateSort(), (req, res) => {
+  res.json(res.paginatedResult);
+});
+
+function paginateSort() {
+  return (req, res, next) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const sortedData = sort(req.body.order, req.body.sort);
+
+    const result = {};
+
+    if (endIndex < sortedData.length) {
+      result.next = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+    if (startIndex > 0) {
+      result.previous = {
+        page: page - 1,
+        limit: limit,
+      };
+    }
+    result.results = sortedData.slice(startIndex, endIndex);
+    res.paginatedResult = result;
+    next();
+  };
+}
+
+function paginate(model) {
+  return (req, res, next) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const result = {};
+
+    if (endIndex < model.length) {
+      result.next = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+    if (startIndex > 0) {
+      result.previous = {
+        page: page - 1,
+        limit: limit,
+      };
+    }
+    result.results = model.slice(startIndex, endIndex);
+    res.paginatedResult = result;
+    next();
+  };
+}
+
+function sort(order, sort) {
+  let sortorder = order;
+  let sortingColumn = sort;
+  let sortedData = [...tableData];
+
+  sortedData.sort((a, b) => {
+    if (a[sortingColumn] < b[sortingColumn]) {
+      return sortorder === "asc" ? -1 : 1;
+    }
+    if (a[sortingColumn] > b[sortingColumn]) {
+      return sortorder === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
+  return sortedData;
+}
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
