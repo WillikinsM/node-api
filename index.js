@@ -50,6 +50,10 @@ app.post("/table", paginateSort(), (req, res) => {
   res.json(res.paginatedResult);
 });
 
+app.post("/form", paginateFilter(), (req, res) => {
+  res.json(res.paginatedResult);
+});
+
 function paginateSort() {
   return (req, res, next) => {
     const page = parseInt(req.query.page);
@@ -96,6 +100,50 @@ function sort(order, sort) {
     return 0;
   });
   return sortedData;
+}
+
+function paginateFilter() {
+  return (req, res, next) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const filteredData = filter(req.body.filter, req.body.index);
+    const result = {};
+    if (filteredData.length === 0) {
+      result.results = [
+        {
+          name: "Nenhum resultado encontrado",
+          category: "Nenhum resultado encontrado",
+          releaseYear: "Nenhum resultado encontrado",
+        },
+      ];
+    } else {
+      result.results = filteredData.slice(startIndex, endIndex);
+    }
+
+    res.paginatedResult = result;
+    next();
+  };
+}
+
+function filter(filter, index) {
+  let filteredData = [...tableData];
+  if (index === "releaseYear") {
+    filteredData = filteredData.filter((item) => {
+      return item.releaseYear.toString().includes(filter.toString());
+    });
+  } else {
+    filteredData = filteredData.filter((item) => {
+      return item[index].toLowerCase().includes(
+        filter
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f \s+]/g, " ")
+      );
+    });
+  }
+  return filteredData;
 }
 
 app.listen(port, () => {
