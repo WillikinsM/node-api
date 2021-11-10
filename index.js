@@ -42,31 +42,6 @@ app.get("/infos", (req, res) => {
   res.send(myInfo);
 });
 
-/* app.get("/table", (req, res) => {
-  res.send(tableData);
-});
-
-app.post("/table", (req, res) => {
-  let sortorder = req.body.order;
-  let sortingColumn = req.body.sort;
-  var sortedData = [...tableData];
-  console.log(sortingColumn);
-  console.log(sortorder);
-
-  sortedData.sort((a, b) => {
-    if (a[sortingColumn] < b[sortingColumn]) {
-      return sortorder === "asc" ? -1 : 1;
-    }
-    if (a[sortingColumn] > b[sortingColumn]) {
-      return sortorder === "asc" ? 1 : -1;
-    }
-    return 0;
-  });
-
-  res.send(sortedData);
-});
- */
-
 app.get("/table", paginate(tableData), (req, res) => {
   res.json(res.paginatedResult);
 });
@@ -85,18 +60,6 @@ function paginateSort() {
 
     const result = {};
 
-    if (endIndex < sortedData.length) {
-      result.next = {
-        page: page + 1,
-        limit: limit,
-      };
-    }
-    if (startIndex > 0) {
-      result.previous = {
-        page: page - 1,
-        limit: limit,
-      };
-    }
     result.results = sortedData.slice(startIndex, endIndex);
     res.paginatedResult = result;
     next();
@@ -112,18 +75,6 @@ function paginate(model) {
 
     const result = {};
 
-    if (endIndex < model.length) {
-      result.next = {
-        page: page + 1,
-        limit: limit,
-      };
-    }
-    if (startIndex > 0) {
-      result.previous = {
-        page: page - 1,
-        limit: limit,
-      };
-    }
     result.results = model.slice(startIndex, endIndex);
     res.paginatedResult = result;
     next();
