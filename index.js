@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port = 8080;
+const port = 3000;
 
 const myInfo = {
   myName: "Willikins Matheus Gonçalves Abreu",
@@ -146,6 +146,6 @@ function filter(filter, index) {
   return filteredData;
 }
 
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
