@@ -1,7 +1,7 @@
 {
   "name": "node-api",
   "version": "1.0.0",
-  "description": "api para se consumida em react",
+  "description": "api para ser consumida em react",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
