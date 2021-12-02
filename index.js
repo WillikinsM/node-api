@@ -1,4 +1,6 @@
 const express = require("express");
+const { default: upload } = require("./config/upload");
+const { default: uploadController } = require("./controllers/uploadController");
 const app = express();
 const port = 3000;
 
@@ -525,6 +527,8 @@ app.get("/message/chat:id", getMessages(), (req, res) => {
 app.get("/message/chat", getContacts(), (req, res) => {
   res.json(res.sortedContact);
 });
+
+app.post("message/upload", upload.array["images"], uploadController.create);
 
 function getMessages() {
   return (req, res, next) => {
